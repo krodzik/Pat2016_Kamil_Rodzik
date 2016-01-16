@@ -2,7 +2,9 @@ package kamil.rodzik;
 
 /* import android.support.v7.app.AppCompatActivity; */
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,6 +48,13 @@ public class LoginActivity extends Activity {
 
     private void attemptLogin(){
         if (DEBUG) Log.i(TAG, "attemptLogin()");
+        // SharedPreferences variables and ifLogged to remember if user is logged
+        final String MyPREFERENCES = "MyPrefs";
+        final String Logged = "loggedKey";
+        boolean ifLogged;
+        SharedPreferences sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -86,10 +95,14 @@ public class LoginActivity extends Activity {
             focusView.requestFocus();
         } else {
             if (DEBUG) Log.i(TAG, "attemptLogin() - SUCCESS");
+            // Saves logged state to SharedPreferences
+            ifLogged = true;
+            editor.putBoolean(Logged, ifLogged);
+            editor.commit();
             // Everything seems fine. Start next activity and finish this one.
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
-            if (DEBUG) Log.i(TAG, "odpala MAIN");
+            if (DEBUG) Log.i(TAG, "start MainActivity");
             finish();
         }
     }

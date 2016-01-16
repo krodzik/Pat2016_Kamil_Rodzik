@@ -1,12 +1,18 @@
 package kamil.rodzik;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+/**
+ * Created by Kamil Rodzik on 11.01.2015.
+ * Main screen.
+ */
 
 public class MainActivity extends Activity {
 
@@ -28,9 +34,20 @@ public class MainActivity extends Activity {
     }
 
     private void logout(){
+        if (DEBUG) Log.i(TAG, "logout()");
+        // SharedPreferences variables and ifLogged to remember if user is logged
+        // Changing ifLogged to false on Logout click
+        final String MyPREFERENCES = "MyPrefs";
+        final String Logged = "loggedKey";
+        boolean ifLogged = false;
+        SharedPreferences sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean(Logged, ifLogged);
+        editor.commit();
+
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
-        if (DEBUG) Log.i(TAG, "poprawne wylogowanie");
         finish();
     }
 }
