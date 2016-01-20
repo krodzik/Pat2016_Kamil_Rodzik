@@ -22,11 +22,13 @@ import java.util.regex.Pattern;
  */
 public class LoginActivity extends Activity {
 
-    private static final String TAG = "main";
+    private static final String TAG = LoginActivity.class.getSimpleName(); // For logging.
     private static final boolean DEBUG = true;  // Set this to false to disable logs.
 
     private EditText mEmailView;
     private EditText mPasswordView;
+
+    private SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +46,21 @@ public class LoginActivity extends Activity {
                 attemptLogin();
             }
         });
+
+        // Need to send context to SharedPreferences
+        sharedPref = new SharedPref(this);
     }
 
     private void attemptLogin(){
         if (DEBUG) Log.i(TAG, "attemptLogin()");
         // SharedPreferences variables and ifLogged to remember if user is logged
+        /*
         final String MyPREFERENCES = "MyPrefs";
         final String Logged = "loggedKey";
         boolean ifLogged;
         SharedPreferences sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
+        */
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -96,9 +102,12 @@ public class LoginActivity extends Activity {
         } else {
             if (DEBUG) Log.i(TAG, "attemptLogin() - SUCCESS");
             // Saves logged state to SharedPreferences
+            sharedPref.changeIfLogged(true);
+            /*
             ifLogged = true;
             editor.putBoolean(Logged, ifLogged);
             editor.commit();
+            */
             // Everything seems fine. Start next activity and finish this one.
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);

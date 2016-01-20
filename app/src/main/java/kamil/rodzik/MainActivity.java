@@ -16,13 +16,17 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
-    private static final String TAG = "main";
+    private static final String TAG = MainActivity.class.getSimpleName();   // For logging.
     private static final boolean DEBUG = true;  // Set this to false to disable logs.
+
+    SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPref = new SharedPref(this);
 
         Button mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mSignOutButton.setOnClickListener(new View.OnClickListener() {
@@ -37,15 +41,18 @@ public class MainActivity extends Activity {
         if (DEBUG) Log.i(TAG, "logout()");
         // SharedPreferences variables and ifLogged to remember if user is logged
         // Changing ifLogged to false on Logout click
+        sharedPref.changeIfLogged(false);
+        /*
         final String MyPREFERENCES = "MyPrefs";
         final String Logged = "loggedKey";
+
         boolean ifLogged = false;
         SharedPreferences sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putBoolean(Logged, ifLogged);
         editor.commit();
-
+        */
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();

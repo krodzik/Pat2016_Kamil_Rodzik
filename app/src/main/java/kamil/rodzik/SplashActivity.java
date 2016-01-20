@@ -16,10 +16,15 @@ import android.util.Log;
  */
 public class SplashActivity extends Activity {
 
+    private static final String TAG = SplashActivity.class.getSimpleName(); // For logging.
+    private static final boolean DEBUG = true;  // Set this to false to disable logs.
+
+    SharedPref sharedPref;
+
     private boolean ifBackPressed = false;  // For checking if BACK button were pressed.
     private boolean ifConfigurationChanged = false;
-    private static final String TAG = "main";
-    private static final boolean DEBUG = true;  // Set this to false to disable logs.
+
+    static final int SPLASH_TIME_OUT = 5000;       // Splash screen timer
 
     private Handler handler = new Handler();
     private final Globals g = Globals.getInstance();
@@ -28,6 +33,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (DEBUG) Log.i(TAG, "on create");
+        sharedPref = new SharedPref(this);
     }
 
     @Override
@@ -36,20 +42,20 @@ public class SplashActivity extends Activity {
         if (DEBUG) Log.i(TAG, "onResume()");
 
         // SharedPreferences variables and ifLogged to remember if user is logged
+        /*
         final String MyPREFERENCES = "MyPrefs";
         final String Logged = "loggedKey";
         boolean ifLogged;   // For checking if user already been logged
         SharedPreferences sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-
-        final int SPLASH_TIME_OUT = 5000;       /* Splash screen timer */
+        */
 
         if (DEBUG) Log.v("config-Resume", "" + ifConfigurationChanged);
 
         handler = g.getData();
 
         if (!ifConfigurationChanged) {
-            ifLogged = sharedPreferences.getBoolean(Logged, false);
-            if (ifLogged){
+            //ifLogged = sharedPreferences.getBoolean(Logged, false);
+            if (sharedPref.getIfLogged()){
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
                 if (DEBUG) Log.i(TAG, "start MainActivity - already Logged");
