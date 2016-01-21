@@ -1,11 +1,8 @@
 package kamil.rodzik;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,18 +12,20 @@ import android.widget.Button;
  */
 
 public class MainActivity extends Activity {
+    // For logging.
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private Logs log;
 
-    private static final String TAG = MainActivity.class.getSimpleName();   // For logging.
-    private static final boolean DEBUG = true;  // Set this to false to disable logs.
+    private SharedPref sharedPref;
 
-    SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        // Sending context to SharedPreferences.
         sharedPref = new SharedPref(this);
+        log = new Logs(TAG);
 
         Button mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mSignOutButton.setOnClickListener(new View.OnClickListener() {
@@ -38,21 +37,8 @@ public class MainActivity extends Activity {
     }
 
     private void logout(){
-        if (DEBUG) Log.i(TAG, "logout()");
-        // SharedPreferences variables and ifLogged to remember if user is logged
-        // Changing ifLogged to false on Logout click
+        log.i("logout()");
         sharedPref.changeIfLogged(false);
-        /*
-        final String MyPREFERENCES = "MyPrefs";
-        final String Logged = "loggedKey";
-
-        boolean ifLogged = false;
-        SharedPreferences sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putBoolean(Logged, ifLogged);
-        editor.commit();
-        */
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
