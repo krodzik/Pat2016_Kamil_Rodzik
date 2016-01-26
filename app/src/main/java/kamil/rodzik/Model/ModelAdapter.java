@@ -69,7 +69,9 @@ public class ModelAdapter extends ArrayAdapter<Model> {
         holder.title.setText(modelList.get(position).getTitle());
         holder.desc.setText(modelList.get(position).getDesc());
         holder.imageView.setImageResource(R.mipmap.ic_launcher);
+        // If for some reason image could not be loaded from server it will stay the same as above
         new DownloadImageTask(holder.imageView).execute(modelList.get(position).getImage());
+
 
         return v;
     }
@@ -90,8 +92,12 @@ public class ModelAdapter extends ArrayAdapter<Model> {
         @Override
         protected Bitmap doInBackground(String... urls) {
             String url = urls[0];
+            Bitmap minature = decodeSampledBitmapFromStream(url, 50, 50);
+            if(minature == null) {
+                log.i("Miniatura rowna sie 0, obrazek tymczasowy nie powininen sie zmienic");
+            }
 
-            return decodeSampledBitmapFromStream(url, 50, 50);
+            return minature;
         }
 
         @Override
@@ -103,11 +109,11 @@ public class ModelAdapter extends ArrayAdapter<Model> {
     public static Bitmap decodeSampledBitmapFromStream(String url,
                                                        int reqWidth, int reqHeight) {
         try {
-            InputStream isFirst = new java.net.URL(url).openStream();
+            InputStream inputStream1 = new java.net.URL(url).openStream();
             // First decode with inJustDecodeBounds=true to check dimensions
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(isFirst, null, options);
+            BitmapFactory.decodeStream(inputStream1, null, options);
 
             // Calculate inSampleSize
             options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
@@ -115,8 +121,8 @@ public class ModelAdapter extends ArrayAdapter<Model> {
             // Decode bitmap with inSampleSize set
             options.inJustDecodeBounds = false;
 
-            InputStream isSecond = new java.net.URL(url).openStream();
-            return BitmapFactory.decodeStream(isSecond, null, options);
+            InputStream inputStream2 = new java.net.URL(url).openStream();
+            return BitmapFactory.decodeStream(inputStream2, null, options);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -22,12 +22,12 @@
         android:text="@string/action_sign_out"
         android:textColor="#fff"
         android:textStyle="bold" />
-    -->
+        -->
 
     <ListView
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/list"
-        tools:listitem="@layout/list"/>
+        tools:listitem="@layout/list" />
 
 </LinearLayout>

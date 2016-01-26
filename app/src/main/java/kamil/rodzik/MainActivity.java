@@ -100,9 +100,7 @@ public class MainActivity extends Activity {
                 //urlConnection = (HttpURLConnection) url.openConnection();
                 ////urlConnection.connect();
                 //InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                log.i("Tu sie rypnie bo zjebany serwer.");
                 BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                log.i("rypnelo.");
                 /*
                 log.i("Po otwartym połaczeniu.");
                 InputStream is = new BufferedInputStream(urlConnection.getInputStream());
