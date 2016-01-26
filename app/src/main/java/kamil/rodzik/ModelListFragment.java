@@ -1,10 +1,13 @@
 package kamil.rodzik;
 
-import android.app.Activity;
+import android.app.ListFragment;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,68 +27,58 @@ import kamil.rodzik.Model.Model;
 import kamil.rodzik.Model.ModelAdapter;
 
 /**
- * Created by Kamil Rodzik on 11.01.2015.
- * Main screen.
+ * Created by Kamil on 26.01.2016.
+ *
  */
-
-public class MainActivity extends Activity {
+public class ModelListFragment extends ListFragment {
     // For logging.
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private Logs log;
+    private static final String TAG = ModelListFragment.class.getSimpleName();
+    private Logs log = new Logs(TAG);
 
-    private SharedPref sharedPref;
-
-    /*
     final static String BASE_SERVER_URL = "http://doom.comli.com/page_0.json";
 
     //ListView list_view;
     ArrayList<Model> modelList;
     ModelAdapter adapter;
-*/
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        // Sending context to SharedPreferences.
-        sharedPref = new SharedPref(this);
-        log = new Logs(TAG);
+        //setRetainInstance(true);
+    }
 
-        /*
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         modelList = new ArrayList<Model>();
         new JSONAsyncTask().execute(BASE_SERVER_URL);
 
-        ListView listView = (ListView)findViewById(R.id.list);
-        adapter = new ModelAdapter(getApplicationContext(), R.layout.list_view, modelList);
+        //ListView listView = (ListView)findViewById(R.id.list_view);
+        adapter = new ModelAdapter(getActivity().getBaseContext(), R.layout.list_view, modelList);
 
-        listView.setAdapter(adapter);
-*/
+        //listView.setAdapter(adapter);
+        setListAdapter(adapter);
 
-        /* LOGOUT BUTTON LOGIC
-        Button mSignOutButton = (Button) findViewById(R.id.sign_out_button);
-        mSignOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logout();
-            }
-        });
-        */
+        return super.onCreateView(inflater, container, savedInstanceState);
+
+        //View view = inflater.inflate(R.layout.list_fragment, container, false);
+        //return view;
     }
 
-    /*
     // params, progress, result
-    public class JSONAsyncTask extends AsyncTask<String, Void, Boolean>{
+    public class JSONAsyncTask extends AsyncTask<String, Void, Boolean> {
 
         ProgressDialog dialog;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = new ProgressDialog(MainActivity.this);
+            /*
+            dialog = new ProgressDialog();
             dialog.setMessage("Loading, pleas wait");
             dialog.setTitle("Connecting server");
             dialog.show();
-            dialog.setCancelable(false);
+            dialog.setCancelable(false);*/
         }
 
 
@@ -99,9 +92,17 @@ public class MainActivity extends Activity {
 
                 //TODO CHECK IF WORKING
                 URL url = new URL(urls[0]);
-                log.i("Otwiera połaczenie.");
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                //urlConnection = (HttpURLConnection) url.openConnection();
+                ////urlConnection.connect();
+                //InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                 BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                /*
+                log.i("Po otwartym połaczeniu.");
+                InputStream is = new BufferedInputStream(urlConnection.getInputStream());
+                log.i("W przerwie.");
+                BufferedReader in = new BufferedReader(new InputStreamReader(is));
+                */
 
 
                 String line = "";
@@ -149,19 +150,18 @@ public class MainActivity extends Activity {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
 
-            dialog.cancel();
+            //dialog.cancel();
             adapter.notifyDataSetChanged();
             if(result == false){
-                Toast.makeText(getApplicationContext(), "Unable to fetch data from server", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Unable to fetch data from server", Toast.LENGTH_LONG).show();
             }
+
+            /* tego w tutku nie ma
+            else {
+                ModelAdapter adapter = new ModelAdapter(getApplicationContext(), R.layout.list_view , modelList);
+                list_view.setAdapter(adapter);
+            }
+            */
         }
-    }
-*/
-    private void logout(){
-        log.i("logout()");
-        sharedPref.changeIfLogged(false);
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
     }
 }
