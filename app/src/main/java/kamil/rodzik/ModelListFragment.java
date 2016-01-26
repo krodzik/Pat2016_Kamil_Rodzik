@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -41,10 +42,11 @@ public class ModelListFragment extends ListFragment {
     ArrayList<Model> modelList;
     ModelAdapter adapter;
 
+    private ProgressBar progressBar;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //setRetainInstance(true);
     }
 
@@ -74,12 +76,15 @@ public class ModelListFragment extends ListFragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            /*
-            dialog = new ProgressDialog();
+
+            //Toast.makeText(getActivity().getBaseContext(), "Connecting to server...", Toast.LENGTH_LONG).show();
+/*
+            dialog = new ProgressDialog(getActivity().);
             dialog.setMessage("Loading, pleas wait");
             dialog.setTitle("Connecting server");
             dialog.show();
-            dialog.setCancelable(false);*/
+            dialog.setCancelable(false);
+*/
         }
 
 
@@ -153,8 +158,9 @@ public class ModelListFragment extends ListFragment {
 
             //dialog.cancel();
             adapter.notifyDataSetChanged();
+
             if(result == false){
-                //Toast.makeText(getApplicationContext(), "Unable to fetch data from server", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getBaseContext(), "Unable to fetch data from server", Toast.LENGTH_LONG).show();
             }
 
             /* tego w tutku nie ma
