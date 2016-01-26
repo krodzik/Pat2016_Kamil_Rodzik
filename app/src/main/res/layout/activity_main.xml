@@ -11,6 +11,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="kamil.rodzik.MainActivity">
 
+    <!--
     <Button
         android:id="@+id/sign_out_button"
         style="?android:textAppearanceSmall"
@@ -21,5 +22,12 @@
         android:text="@string/action_sign_out"
         android:textColor="#fff"
         android:textStyle="bold" />
+    -->
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/list"
+        tools:listitem="@layout/list"/>
 
 </LinearLayout>

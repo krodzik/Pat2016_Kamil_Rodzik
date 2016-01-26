@@ -25,4 +25,9 @@ public class Logs {
         if(DEBUG)
             Log.i(TAG, msg + " " + Boolean.toString(tr));
     }
+
+    public void e(String msg){
+        if(DEBUG)
+            Log.e(TAG, msg);
+    }
 }
