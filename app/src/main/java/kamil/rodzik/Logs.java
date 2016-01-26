@@ -21,6 +21,11 @@ public class Logs {
             Log.i(TAG, msg);
     }
 
+    public void I(String msg, int value){
+        if(DEBUG)
+            Log.i(TAG, msg + " " + Integer.toString(value));
+    }
+
     public void bool(String msg, Boolean tr) {
         if(DEBUG)
             Log.i(TAG, msg + " " + Boolean.toString(tr));
