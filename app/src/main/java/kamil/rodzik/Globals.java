@@ -2,8 +2,6 @@ package kamil.rodzik;
 
 import android.os.Handler;
 
-import kamil.rodzik.Model.ImageLoader;
-
 /**
  * Created by Kamil on 14.01.2016.
  * Singleton class. Here I storage globals variable.

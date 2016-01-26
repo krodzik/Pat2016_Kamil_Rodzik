@@ -1,15 +1,11 @@
 package kamil.rodzik;
 
 import android.app.ListFragment;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -29,7 +25,7 @@ import kamil.rodzik.Model.ModelAdapter;
 
 /**
  * Created by Kamil on 26.01.2016.
- *
+ * ListFragment
  */
 public class ModelListFragment extends ListFragment {
     // For logging.
@@ -38,90 +34,51 @@ public class ModelListFragment extends ListFragment {
 
     final static String BASE_SERVER_URL = "http://doom.comli.com/page_0.json";
 
-    //ListView list_view;
     ArrayList<Model> modelList;
     ModelAdapter adapter;
-
-    private ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        modelList = new ArrayList<Model>();
+        modelList = new ArrayList<>();
         new JSONAsyncTask().execute(BASE_SERVER_URL);
 
-        //ListView listView = (ListView)findViewById(R.id.list_view);
         adapter = new ModelAdapter(getActivity().getBaseContext(), R.layout.list_view, modelList);
-
-        //listView.setAdapter(adapter);
         setListAdapter(adapter);
 
         return super.onCreateView(inflater, container, savedInstanceState);
-
-        //View view = inflater.inflate(R.layout.list_fragment, container, false);
-        //return view;
     }
 
-    // params, progress, result
     public class JSONAsyncTask extends AsyncTask<String, Void, Boolean> {
-
-        ProgressDialog dialog;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
-            //Toast.makeText(getActivity().getBaseContext(), "Connecting to server...", Toast.LENGTH_LONG).show();
-/*
-            dialog = new ProgressDialog(getActivity().);
-            dialog.setMessage("Loading, pleas wait");
-            dialog.setTitle("Connecting server");
-            dialog.show();
-            dialog.setCancelable(false);
-*/
         }
-
 
         @Override
         protected Boolean doInBackground(String... urls) {
 
             StringBuilder result = new StringBuilder();
-            //HttpURLConnection urlConnection = null;
 
-            try{
-
-                //TODO CHECK IF WORKING
+            try {
                 URL url = new URL(urls[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                //urlConnection = (HttpURLConnection) url.openConnection();
-                ////urlConnection.connect();
-                //InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                /*
-                log.i("Po otwartym połaczeniu.");
-                InputStream is = new BufferedInputStream(urlConnection.getInputStream());
-                log.i("W przerwie.");
-                BufferedReader in = new BufferedReader(new InputStreamReader(is));
-                */
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(urlConnection.getInputStream()));
 
-
-                String line = "";
-                log.i("Wchodzi do while.");
+                String line;
                 while ((line = in.readLine()) != null) {
                     result.append(line);
                 }
-                log.i("Jestesmy w while. Po warunku");
 
                 JSONObject jsonObject = new JSONObject(result.toString());
                 JSONArray jsonArray = jsonObject.getJSONArray("array");
-
-                //JSONArray jsonArray = new JSONArray(line);
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     Model model = new Model();
@@ -134,41 +91,30 @@ public class ModelListFragment extends ListFragment {
 
                     modelList.add(model);
                 }
-
-                //urlConnection.disconnect();
-                log.i("udalo sie!");
+                log.i("Success parsing JSON!");
                 return true;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            log.i("Nie udało się.");
-            //urlConnection.disconnect();
+            log.i("Fail parsing JSON.");
             return false;
         }
 
-        // nie ma override w tutku
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
 
-            //dialog.cancel();
             adapter.notifyDataSetChanged();
 
-            if(result == false){
-                Toast.makeText(getActivity().getBaseContext(), "Unable to fetch data from server", Toast.LENGTH_LONG).show();
+            if (!result) {
+                Toast.makeText(getActivity().getBaseContext(),
+                        "Unable to fetch data from server", Toast.LENGTH_LONG).show();
             }
-
-            /* tego w tutku nie ma
-            else {
-                ModelAdapter adapter = new ModelAdapter(getApplicationContext(), R.layout.list_view , modelList);
-                list_view.setAdapter(adapter);
-            }
-            */
         }
     }
 }

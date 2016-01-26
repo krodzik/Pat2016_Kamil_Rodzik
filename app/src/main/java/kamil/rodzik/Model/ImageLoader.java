@@ -47,29 +47,24 @@ public class ImageLoader {
     }
 
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        log.i("wartosc klucza przy dodaniu : " + key);
         if (getBitmapFromMemCache(key) == null) {
             mMemoryCache.put(key, bitmap);
         }
     }
 
     public Bitmap getBitmapFromMemCache(String key) {
-        log.i("wartosc klucza przy pobieraniu : " + key);
         return mMemoryCache.get(key);
     }
 
-    public void loadBitmap(String resId, ImageView imageView) {
-        final String imageKey = resId;
+    public void loadBitmap(String imageKey, ImageView imageView) {
 
         final Bitmap bitmap = getBitmapFromMemCache(imageKey);
-        log.i("wartosc klucza przy sprawdzaniu: " + imageKey);
         if (bitmap != null) {
             log.i("Image already in cache.");
             imageView.setImageBitmap(bitmap);
         } else {
             log.i("No such image in cache. Downloading...");
-            //imageView.setImageResource(R.mipmap.ic_launcher);
-            new DownloadImageTask(imageView).execute(resId);
+            new DownloadImageTask(imageView).execute(imageKey);
         }
     }
 
@@ -90,8 +85,7 @@ public class ImageLoader {
                 url = URL_OF_TEMP_IMAGE;
                 final Bitmap bitmap = getBitmapFromMemCache(url);
                 if (bitmap != null) {
-                    //imageView.setImageBitmap(bitmap);
-                    log.i("Obraz tymczasowy juz wczesniej wczytany. Nie wczytuje jeszcze raz.");
+                    log.i("Temporary image already downloaded.");
                     miniature = bitmap;
                 } else {
                     miniature = decodeSampledBitmapFromStream(url, IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -133,21 +127,6 @@ public class ImageLoader {
         log.e("ERROR in decodeSampledBitmapFromStream");
         log.e("i.e. missing image or wrong url");
 
-        //Resources res = Resources.getSystem().getColor(R.color.colorAccent, );
-        //int id = R.color.colorAccent;
-        /*
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        */
-        // zobaczymy czy dla 0 pojdzie
         return BitmapFactory.decodeStream(null ,null, null);
     }
 
