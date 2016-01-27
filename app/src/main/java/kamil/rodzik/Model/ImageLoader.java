@@ -6,21 +6,22 @@ import android.os.AsyncTask;
 import android.util.LruCache;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import kamil.rodzik.Logs;
+import kamil.rodzik.R;
 
 /**
  * Created by Kamil on 26.01.2016.
- *
  */
 public class ImageLoader {
     // For logging.
     private static final String TAG = ImageLoader.class.getSimpleName();
     private static Logs log;
 
-    final static String URL_OF_TEMP_IMAGE = "http://doom.comli.com/ic_launcher.png";
+    final static String PATH_TO_TEMP_IMAGE = "file:///drawable/temporary_image.png";
     private final int IMAGE_HEIGHT = 100;
     private final int IMAGE_WIDTH = 100;
 
@@ -80,18 +81,17 @@ public class ImageLoader {
             String url = urls[0];
             Bitmap miniature = decodeSampledBitmapFromStream(url, IMAGE_WIDTH, IMAGE_HEIGHT);
 
-            if(miniature == null) {
+            if (miniature == null) {
                 log.i("Temporary image should show.");
-                url = URL_OF_TEMP_IMAGE;
+                url = PATH_TO_TEMP_IMAGE;
                 final Bitmap bitmap = getBitmapFromMemCache(url);
                 if (bitmap != null) {
                     log.i("Temporary image already downloaded.");
                     miniature = bitmap;
                 } else {
-                    miniature = decodeSampledBitmapFromStream(url, IMAGE_WIDTH, IMAGE_HEIGHT);
+                    miniature = decodeSampledBitmapFromFile(url, IMAGE_WIDTH, IMAGE_HEIGHT);
                 }
             }
-
             addBitmapToMemoryCache(url, miniature);
 
             return miniature;
@@ -127,7 +127,23 @@ public class ImageLoader {
         log.e("ERROR in decodeSampledBitmapFromStream");
         log.e("i.e. missing image or wrong url");
 
-        return BitmapFactory.decodeStream(null ,null, null);
+        return BitmapFactory.decodeStream(null, null, null);
+    }
+
+    public static Bitmap decodeSampledBitmapFromFile(String path,
+                                                     int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(path, options);
     }
 
     public static int calculateInSampleSize(

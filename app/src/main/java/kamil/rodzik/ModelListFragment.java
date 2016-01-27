@@ -37,6 +37,7 @@ public class ModelListFragment extends ListFragment {
     ArrayList<Model> modelList;
     ModelAdapter adapter;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
