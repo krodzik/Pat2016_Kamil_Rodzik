@@ -1,7 +1,10 @@
 package kamil.rodzik.Model;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.LruCache;
 import android.widget.ImageView;
@@ -15,20 +18,26 @@ import kamil.rodzik.R;
 
 /**
  * Created by Kamil on 26.01.2016.
+ *
  */
 public class ImageLoader {
     // For logging.
     private static final String TAG = ImageLoader.class.getSimpleName();
     private static Logs log;
 
-    final static String PATH_TO_TEMP_IMAGE = "file:///drawable/temporary_image.png";
+    private static Resources PATH_TO_TEMP_IMAGE;// = "file:///drawable/temporary_image.png";
     private final int IMAGE_HEIGHT = 100;
     private final int IMAGE_WIDTH = 100;
 
     private LruCache<String, Bitmap> mMemoryCache;
 
-    public ImageLoader() {
+    int image;
+
+    public ImageLoader(Context context) {
         log = new Logs(TAG);
+
+        PATH_TO_TEMP_IMAGE = context.getResources();
+        image = context.getResources().getIdentifier("temporary_image", "drawable", context.getPackageName());
 
         // Get max available VM memory, exceeding this amount will throw an
         // OutOfMemory exception. Stored in kilobytes as LruCache takes an
@@ -83,17 +92,21 @@ public class ImageLoader {
 
             if (miniature == null) {
                 log.i("Temporary image should show.");
-                url = PATH_TO_TEMP_IMAGE;
-                final Bitmap bitmap = getBitmapFromMemCache(url);
+                // TODO sprawdzanie czy zostal juz zaladowany
+                //url = PATH_TO_TEMP_IMAGE;
+                // tutaj zabieram sparwdzanie czy juz jest wczytany temp image
+                //final Bitmap bitmap = getBitmapFromMemCache(url);
+                /*
                 if (bitmap != null) {
                     log.i("Temporary image already downloaded.");
                     miniature = bitmap;
                 } else {
-                    miniature = decodeSampledBitmapFromFile(url, IMAGE_WIDTH, IMAGE_HEIGHT);
-                }
+                */
+                    miniature = decodeSampledBitmapFromResource(PATH_TO_TEMP_IMAGE, image, IMAGE_WIDTH, IMAGE_HEIGHT);
+                //}
+            } else {
+                addBitmapToMemoryCache(url, miniature);
             }
-            addBitmapToMemoryCache(url, miniature);
-
             return miniature;
         }
 
@@ -130,20 +143,20 @@ public class ImageLoader {
         return BitmapFactory.decodeStream(null, null, null);
     }
 
-    public static Bitmap decodeSampledBitmapFromFile(String path,
+    public static Bitmap decodeSampledBitmapFromResource(Resources path, int id,
                                                      int reqWidth, int reqHeight) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options);
+        BitmapFactory.decodeResource(path, id, options);
 
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(path, options);
+        return BitmapFactory.decodeResource(path, id, options);
     }
 
     public static int calculateInSampleSize(

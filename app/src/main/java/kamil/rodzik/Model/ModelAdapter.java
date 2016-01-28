@@ -27,13 +27,16 @@ public class ModelAdapter extends ArrayAdapter<Model> {
     LayoutInflater vi;
     ViewHolder holder;
 
-    ImageLoader imageLoader = new ImageLoader();
+    ImageLoader imageLoader;
 
     public ModelAdapter(Context context, int resource, ArrayList<Model> objects) {
         super(context, resource, objects);
 
         modelList = objects;
         Resource = resource;
+
+        //check
+        imageLoader = new ImageLoader(context);
 
         vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
