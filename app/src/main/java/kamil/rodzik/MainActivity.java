@@ -35,7 +35,6 @@ public class MainActivity extends Activity implements ProgressStatus.OnProgressB
         modelState = ProgressStatus.getProgressStatusInstance().getProgress();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         if(savedInstanceState == null) {
-            log.e("rowna sie null");
             progressBar.setVisibility(View.VISIBLE);
         }
 
