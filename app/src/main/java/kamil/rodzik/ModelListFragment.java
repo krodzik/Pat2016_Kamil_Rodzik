@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -32,34 +33,58 @@ public class ModelListFragment extends ListFragment {
     private static final String TAG = ModelListFragment.class.getSimpleName();
     private Logs log = new Logs(TAG);
 
-    final static String BASE_SERVER_URL = "http://doom.comli.com/page_0.json";
+    final static String BASE_SERVER_URL = "http://doom.comli.com/";
 
     ArrayList<Model> modelList;
     ModelAdapter adapter;
+
+    private ProgressBar progressBar;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        log.e("onCreate");
+        //setRetainInstance(true);
 
         modelList = new ArrayList<>();
         new JSONAsyncTask().execute(BASE_SERVER_URL);
 
+        // context, resource, ...
         adapter = new ModelAdapter(getActivity().getBaseContext(), R.layout.list_view, modelList);
         setListAdapter(adapter);
-
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    public class JSONAsyncTask extends AsyncTask<String, Void, Boolean> {
+    /*
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        log.i("onCreateView");
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+    */
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        log.i("onActivityCreated");
+
+        setRetainInstance(true);
+
+    }
+
+
+    // TODO export to another class
+    public class JSONAsyncTask extends AsyncTask<String, Integer, Boolean> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            // Send "0" to initiate progress bar.
+
+            ProgressStatus.getProgressStatusInstance().changeProgress(0);
+            log.e("Sending 0");
+
         }
 
         @Override
@@ -68,7 +93,11 @@ public class ModelListFragment extends ListFragment {
             StringBuilder result = new StringBuilder();
 
             try {
-                URL url = new URL(urls[0]);
+                // here it takes pagination
+                int fileNumber = 0;
+                String urlString = urls[0] + "page_" + Integer.toString(fileNumber) + ".json";
+                log.i(urlString);
+                URL url = new URL(urlString);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(urlConnection.getInputStream()));
@@ -91,6 +120,9 @@ public class ModelListFragment extends ListFragment {
                     model.setImage(jsonRealObject.getString("url"));
 
                     modelList.add(model);
+                    //log.i("Progress update : " + Integer.toString(i + 1));
+                    publishProgress(i + 1);
+                    Thread.sleep(250);
                 }
                 log.i("Success parsing JSON!");
                 return true;
@@ -100,6 +132,9 @@ public class ModelListFragment extends ListFragment {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+                // dla sleepa
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
             log.i("Fail parsing JSON.");
@@ -107,9 +142,19 @@ public class ModelListFragment extends ListFragment {
         }
 
         @Override
+        protected void onProgressUpdate(Integer... progress) {
+            //progressBar.setProgress(progress[0]);
+            ProgressStatus.getProgressStatusInstance().changeProgress(progress[0]);
+            //progressBar.setProgress(progress[0]);
+            //log.i("Set progress : " + Integer.toString(progress[0]));
+            //adapter.notifyDataSetChanged();
+        }
+
+        @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
 
+            //progressBar.setVisibility(View.GONE);
             adapter.notifyDataSetChanged();
 
             if (!result) {

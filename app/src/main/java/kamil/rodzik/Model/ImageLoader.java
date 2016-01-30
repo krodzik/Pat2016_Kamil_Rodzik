@@ -25,19 +25,24 @@ public class ImageLoader {
     private static final String TAG = ImageLoader.class.getSimpleName();
     private static Logs log;
 
-    private static Resources PATH_TO_TEMP_IMAGE;// = "file:///drawable/temporary_image.png";
+    // Variables for temporary image.
+    private static Resources resources;
+    private static int image;
+    private static String imageName;
+
     private final int IMAGE_HEIGHT = 100;
     private final int IMAGE_WIDTH = 100;
 
     private LruCache<String, Bitmap> mMemoryCache;
 
-    int image;
 
     public ImageLoader(Context context) {
         log = new Logs(TAG);
 
-        PATH_TO_TEMP_IMAGE = context.getResources();
-        image = context.getResources().getIdentifier("temporary_image", "drawable", context.getPackageName());
+        resources = context.getResources();
+        image = context.getResources().getIdentifier("temporary_image", "drawable",
+                context.getPackageName());
+        imageName = resources.getString(image);
 
         // Get max available VM memory, exceeding this amount will throw an
         // OutOfMemory exception. Stored in kilobytes as LruCache takes an
@@ -68,12 +73,12 @@ public class ImageLoader {
 
     public void loadBitmap(String imageKey, ImageView imageView) {
 
-        final Bitmap bitmap = getBitmapFromMemCache(imageKey);
+        Bitmap bitmap = getBitmapFromMemCache(imageKey);
         if (bitmap != null) {
-            log.i("Image already in cache.");
+            //log.i("Image already in cache.");
             imageView.setImageBitmap(bitmap);
         } else {
-            log.i("No such image in cache. Downloading...");
+            //log.i("No such image in cache. Downloading...");
             new DownloadImageTask(imageView).execute(imageKey);
         }
     }
@@ -90,22 +95,18 @@ public class ImageLoader {
             String url = urls[0];
             Bitmap miniature = decodeSampledBitmapFromStream(url, IMAGE_WIDTH, IMAGE_HEIGHT);
 
-            if (miniature == null) {
-                log.i("Temporary image should show.");
-                // TODO sprawdzanie czy zostal juz zaladowany
-                //url = PATH_TO_TEMP_IMAGE;
-                // tutaj zabieram sparwdzanie czy juz jest wczytany temp image
-                //final Bitmap bitmap = getBitmapFromMemCache(url);
-                /*
-                if (bitmap != null) {
-                    log.i("Temporary image already downloaded.");
-                    miniature = bitmap;
-                } else {
-                */
-                    miniature = decodeSampledBitmapFromResource(PATH_TO_TEMP_IMAGE, image, IMAGE_WIDTH, IMAGE_HEIGHT);
-                //}
-            } else {
+            if (miniature != null) {
                 addBitmapToMemoryCache(url, miniature);
+            } else {
+                //log.i("Temporary image should show.");
+                miniature = getBitmapFromMemCache(imageName);
+                if (miniature != null) {
+                    //log.i("Temporary image already in cache.");
+                } else {
+                    miniature = decodeSampledBitmapFromResource(resources, image,
+                            IMAGE_WIDTH, IMAGE_HEIGHT);
+                    addBitmapToMemoryCache(imageName, miniature);
+                }
             }
             return miniature;
         }
@@ -134,11 +135,12 @@ public class ImageLoader {
             InputStream inputStream2 = new java.net.URL(url).openStream();
             return BitmapFactory.decodeStream(inputStream2, null, options);
         } catch (IOException e) {
-            e.printStackTrace();
+            // TODO zmienic potem
+            //e.printStackTrace();
         }
 
-        log.e("ERROR in decodeSampledBitmapFromStream");
-        log.e("i.e. missing image or wrong url");
+        //log.e("ERROR in decodeSampledBitmapFromStream");
+        //log.e("i.e. missing image or wrong url");
 
         return BitmapFactory.decodeStream(null, null, null);
     }

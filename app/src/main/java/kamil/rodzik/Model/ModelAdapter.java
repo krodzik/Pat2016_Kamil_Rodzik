@@ -35,7 +35,6 @@ public class ModelAdapter extends ArrayAdapter<Model> {
         modelList = objects;
         Resource = resource;
 
-        //check
         imageLoader = new ImageLoader(context);
 
         vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -43,6 +42,8 @@ public class ModelAdapter extends ArrayAdapter<Model> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        log.e("Pozycja : " + Integer.toString(position));
 
         View v = convertView;
         if (v == null) {
@@ -62,7 +63,7 @@ public class ModelAdapter extends ArrayAdapter<Model> {
         holder.desc.setText(modelList.get(position).getDesc());
         holder.imageView.setImageResource(R.mipmap.ic_launcher);
 
-        log.i("Image loading ... ");
+        //log.i("Image loading ... ");
         imageLoader.loadBitmap(modelList.get(position).getImage(), holder.imageView);
 
         return v;
