@@ -20,7 +20,7 @@ import kamil.rodzik.Logs;
 public class ImageLoader {
     // For logging.
     private static final String TAG = ImageLoader.class.getSimpleName();
-    private static Logs log;
+    private static Logs log = new Logs(TAG);
 
     // Variables for temporary image.
     private static Resources resources;
@@ -34,7 +34,6 @@ public class ImageLoader {
 
 
     public ImageLoader(Context context) {
-        log = new Logs(TAG);
 
         resources = context.getResources();
         image = context.getResources().getIdentifier("temporary_image", "drawable",

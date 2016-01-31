@@ -68,13 +68,6 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        //log.I("Position :", position);
-        if (checkIfListEnd(position)) {
-            //log.i("Parsing next JSON file.");
-            new JSONParser().execute();
-            alreadyVisitedLastPositions.add(position);
-        }
-
         View v = convertView;
         if (v == null) {
             holder = new ViewHolder();
@@ -95,6 +88,14 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
 
         //log.i("Image loading ... ");
         imageLoader.loadBitmap(JSONObjectsList.get(position).getImage(), holder.imageView);
+
+        // Checking if scrolled to end of list. If yes then trying to get next list elements from
+        // server.
+        if (checkIfListEnd(position)) {
+            //log.i("Parsing next JSON file.");
+            new JSONParser().execute();
+            alreadyVisitedLastPositions.add(position);
+        }
 
         return v;
     }
@@ -121,10 +122,8 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
-            // Send "0" to initiate progress bar.
+            // Send "100" to set progress bar visibility to VISIBLE.
             ProgressStatus.getProgressStatusInstance().changeProgress(100);
-            //log.i("Sending 0");
         }
 
         @Override
@@ -138,14 +137,10 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
 
                 if (isURLReachable(url)) {
                     log.i("URL reachable. Start parsing.");
-                    // Send "0" to initiate progress bar in MainActivity.
-                    //ProgressStatus.getProgressStatusInstance().changeProgress(0);
-                    //ProgressStatus.getProgressStatusInstance().changeProgress(100);
                 } else {    // There's no more JSON file to download.
                     log.e("URL unreachable. There's no more JSON file to download.");
                     return true;
                 }
-
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -170,8 +165,6 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
             } catch (IOException e) {
                 log.e("URL unreachable. Exception throw.");
                 e.printStackTrace();
-                // Using ProgressStatus to notify MainActivity so proper message can be shown.
-                ProgressStatus.getProgressStatusInstance().changeProgress(-1);
             } catch (InterruptedException e) {  // TODO For sleep
                 e.printStackTrace();
             }
@@ -231,6 +224,7 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
 
                 JSONObjectsList.add(objectJSON);
                 publishProgress(i + 1);
+                // TODO delete sleep
                 Thread.sleep(250);
             }
         }
@@ -245,17 +239,17 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
 
-            //progressBar.setVisibility(View.GONE);
-            log.i("onPostExecute");
             notifyDataSetChanged();
 
+            // There's no more file to download from server.
+            // Using ProgressStatus to hide progress bar in MainActivity.
             ProgressStatus.getProgressStatusInstance().changeProgress(101);
 
-            // Error when trying fetch data from server. Using ProgressStatus to notify MainActivity
+            // Error when trying fetch data from server.
+            // Using ProgressStatus to notify MainActivity so proper message can be shown.
             if (!result) {
                 ProgressStatus.getProgressStatusInstance().changeProgress(-1);
             }
-
         }
     }
 

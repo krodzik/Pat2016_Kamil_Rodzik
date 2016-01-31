@@ -69,40 +69,49 @@ public class MainActivity extends Activity implements ProgressStatus.OnProgressB
         // For "0" to "10" changing progress in top progress bar.
         // "-1" means that there's error and JSON file can't be read.
         // "100" is for changing visibility of bottom progress bar denoting new list page is
-        // loading or being already loaded
+        // loading.
+        // "101" is for changing visibility of bottom progress bar when new list page is
+        // loaded.
+
         progressBarStatus = ProgressStatus.getProgressStatusInstance().getProgress();
+        // Start showing progress. (0%)
         if (progressBarStatus == 0){
             progressBar.setVisibility(View.VISIBLE);
         }
         progressBar.setProgress(progressBarStatus);
+        // Stop showing progress. (100%)
         if (progressBarStatus == 10) {
             progressBar.setVisibility(View.GONE);
         }
         // Show message to user when JSON file can't be downloaded.
         if(progressBarStatus == -1) {
-            if(progressBar.getVisibility() == View.VISIBLE)
-                progressBar.setVisibility(View.GONE);
-            Toast.makeText(MainActivity.this,
-                    "Unable to fetch data from server", Toast.LENGTH_LONG).show();
+            changeVisibilityToGONE(progressBar);
+            showToastMessage();
         }
         // Set visibility for bottom progress bar when new list page is loading.
         if(progressBarStatus == 100){
-            if(progressBarUnder.getVisibility() == View.GONE){
-                progressBarUnder.setVisibility(View.VISIBLE);
-            }
+            changeVisibilityToVISIBLE(progressBarUnder);
         }
-        if(progressBarStatus == 101){
-            if(progressBarUnder.getVisibility() == View.VISIBLE){
-                progressBarUnder.setVisibility(View.GONE);
-            }
+        // Set visibility for bottom progress bar when new list page is loaded.
+        if(progressBarStatus == 101) {
+            changeVisibilityToGONE(progressBarUnder);
         }
     }
 
-    private void changeVisibility(ProgressBar progressBarToChangeVisibility){
+    private void changeVisibilityToVISIBLE(ProgressBar progressBarToChangeVisibility){
         if(progressBarToChangeVisibility.getVisibility() == View.GONE){
             progressBarToChangeVisibility.setVisibility(View.VISIBLE);
-        } else {
+        }
+    }
+
+    private void changeVisibilityToGONE(ProgressBar progressBarToChangeVisibility){
+        if(progressBarToChangeVisibility.getVisibility() == View.VISIBLE){
             progressBarToChangeVisibility.setVisibility(View.GONE);
         }
+    }
+
+    private void showToastMessage(){
+        Toast.makeText(MainActivity.this,
+                "Unable to fetch data from server", Toast.LENGTH_LONG).show();
     }
 }

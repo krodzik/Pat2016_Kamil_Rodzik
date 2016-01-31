@@ -24,7 +24,6 @@ public class JSONObjectListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        log.i("onCreate");
 
         JSONObjectsList = new ArrayList<>();
         adapter = new JSONListAdapter(getActivity().getBaseContext(), R.layout.list_view, JSONObjectsList);
@@ -34,7 +33,6 @@ public class JSONObjectListFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        log.i("onActivityCreated");
 
         // Handling orientation changes with this function. Allows to use same adapter.
         // onCreate() method will be call only once.
