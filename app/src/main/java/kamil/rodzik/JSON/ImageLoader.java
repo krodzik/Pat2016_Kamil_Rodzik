@@ -15,7 +15,7 @@ import kamil.rodzik.Logs;
 
 /**
  * Created by Kamil on 26.01.2016.
- *
+ * Loading and storing image class.
  */
 public class ImageLoader {
     // For logging.
@@ -57,13 +57,79 @@ public class ImageLoader {
         };
     }
 
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+    private static Bitmap decodeSampledBitmapFromStream(String url,
+                                                        int reqWidth, int reqHeight) {
+        try {
+            InputStream inputStream1 = new java.net.URL(url).openStream();
+            // First decode with inJustDecodeBounds=true to check dimensions
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(inputStream1, null, options);
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+
+            InputStream inputStream2 = new java.net.URL(url).openStream();
+            return BitmapFactory.decodeStream(inputStream2, null, options);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //log.e("ERROR in decodeSampledBitmapFromStream");
+        //log.e("i.e. missing image or wrong url");
+
+        return BitmapFactory.decodeStream(null, null, null);
+    }
+
+    private static Bitmap decodeSampledBitmapFromResource(Resources path, int id,
+                                                          int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(path, id, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(path, id, options);
+    }
+
+    private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    private void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         if (getBitmapFromMemCache(key) == null) {
             mMemoryCache.put(key, bitmap);
         }
     }
 
-    public Bitmap getBitmapFromMemCache(String key) {
+    private Bitmap getBitmapFromMemCache(String key) {
         return mMemoryCache.get(key);
     }
 
@@ -96,9 +162,7 @@ public class ImageLoader {
             } else {
                 //log.i("Temporary image should show.");
                 miniature = getBitmapFromMemCache(imageName);
-                if (miniature != null) {
-                    //log.i("Temporary image already in cache.");
-                } else {
+                if (miniature == null) {
                     miniature = decodeSampledBitmapFromResource(resources, image,
                             IMAGE_WIDTH, IMAGE_HEIGHT);
                     addBitmapToMemoryCache(imageName, miniature);
@@ -111,72 +175,5 @@ public class ImageLoader {
         protected void onPostExecute(Bitmap result) {
             bitmapImage.setImageBitmap(result);
         }
-    }
-
-    public static Bitmap decodeSampledBitmapFromStream(String url,
-                                                       int reqWidth, int reqHeight) {
-        try {
-            InputStream inputStream1 = new java.net.URL(url).openStream();
-            // First decode with inJustDecodeBounds=true to check dimensions
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(inputStream1, null, options);
-
-            // Calculate inSampleSize
-            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-            // Decode bitmap with inSampleSize set
-            options.inJustDecodeBounds = false;
-
-            InputStream inputStream2 = new java.net.URL(url).openStream();
-            return BitmapFactory.decodeStream(inputStream2, null, options);
-        } catch (IOException e) {
-            // TODO zmienic potem
-            //e.printStackTrace();
-        }
-
-        //log.e("ERROR in decodeSampledBitmapFromStream");
-        //log.e("i.e. missing image or wrong url");
-
-        return BitmapFactory.decodeStream(null, null, null);
-    }
-
-    public static Bitmap decodeSampledBitmapFromResource(Resources path, int id,
-                                                     int reqWidth, int reqHeight) {
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(path, id, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(path, id, options);
-    }
-
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
     }
 }

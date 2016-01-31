@@ -17,8 +17,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,21 +32,17 @@ import kamil.rodzik.R;
 public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
     // For logging.
     private static final String TAG = JSONListAdapter.class.getSimpleName();
+    private final static String BASE_SERVER_URL = "http://doom.comli.com/";
     private static Logs log = new Logs(TAG);
-
-    final static String BASE_SERVER_URL = "http://doom.comli.com/";
-
-    ArrayList<ObjectJSON> JSONObjectsList;
-    int Resource;
-    LayoutInflater vi;
-    ViewHolder holder;
-
-    ImageLoader imageLoader;
-
-    final int objectsPerJSONFile = 10;
+    private final int objectsPerJSONFile = 10;
+    private ArrayList<ObjectJSON> JSONObjectsList;
+    private int Resource;
+    private LayoutInflater vi;
+    private ViewHolder holder;
+    private ImageLoader imageLoader;
     // Array that stole already visited last elements of JSONObjectList.
     // Used with pagination.
-    List<Integer> alreadyVisitedLastPositions;
+    private List<Integer> alreadyVisitedLastPositions;
 
 
     public JSONListAdapter(Context context, int resource, ArrayList<ObjectJSON> objects) {
@@ -156,14 +150,10 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
 
                 log.i("Success parsing JSON!");
                 return true;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 log.e("URL unreachable. Exception throw.");
-                e.printStackTrace();
-            } catch (InterruptedException e) {  // TODO For sleep
                 e.printStackTrace();
             }
 
@@ -210,7 +200,7 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
             return dataFromURL.toString();
         }
 
-        private void getObjectsFromJSONArray(JSONArray jsonArray) throws JSONException, InterruptedException {
+        private void getObjectsFromJSONArray(JSONArray jsonArray) throws JSONException {
             for (int i = 0; i < jsonArray.length(); i++) {
                 ObjectJSON objectJSON = new ObjectJSON();
 
@@ -222,8 +212,6 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
 
                 JSONObjectsList.add(objectJSON);
                 publishProgress(i + 1);
-                // TODO delete sleep
-                Thread.sleep(250);
             }
         }
 

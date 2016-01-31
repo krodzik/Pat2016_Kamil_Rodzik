@@ -17,8 +17,8 @@ public class JSONObjectListFragment extends ListFragment {
     private static final String TAG = JSONObjectListFragment.class.getSimpleName();
     private Logs log = new Logs(TAG);
 
-    JSONListAdapter adapter;
-    ArrayList<ObjectJSON> JSONObjectsList;
+    private JSONListAdapter adapter;
+    private ArrayList<ObjectJSON> JSONObjectsList;
 
 
     @Override
