@@ -18,4 +18,7 @@
 
     <!-- Strings related to main screen -->
     <string name="action_sign_out">Logout</string>
+    <string name="title_element_list">Title</string>
+    <string name="desc_element_list">Description</string>
+    <string name="image_desc_element_list">Image from JSON Object</string>
 </resources>

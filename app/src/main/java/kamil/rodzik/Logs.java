@@ -12,27 +12,27 @@ public class Logs {
     private final String TAG;
     private final Boolean DEBUG = BuildConfig.DEBUG;
 
-    public Logs(String tag){
+    public Logs(String tag) {
         TAG = tag;
     }
 
     public void i(String msg) {
-        if(DEBUG)
+        if (DEBUG)
             Log.i(TAG, msg);
     }
 
-    public void I(String msg, int value){
-        if(DEBUG)
+    public void I(String msg, int value) {
+        if (DEBUG)
             Log.i(TAG, msg + " " + Integer.toString(value));
     }
 
     public void bool(String msg, Boolean tr) {
-        if(DEBUG)
+        if (DEBUG)
             Log.i(TAG, msg + " " + Boolean.toString(tr));
     }
 
-    public void e(String msg){
-        if(DEBUG)
+    public void e(String msg) {
+        if (DEBUG)
             Log.e(TAG, msg);
     }
 }

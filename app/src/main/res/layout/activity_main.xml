@@ -38,14 +38,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <fragment
         android:id="@+id/fragment"
         android:name="kamil.rodzik.JSON.JSONObjectListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/progressBar"
-        android:layout_above="@id/progressBarUnder"/>
+        android:layout_above="@id/progressBarUnder"
+        android:layout_below="@id/progressBar" />
 
 </RelativeLayout>

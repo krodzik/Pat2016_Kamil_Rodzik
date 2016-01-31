@@ -105,9 +105,7 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
         if (!((position + 1) % objectsPerJSONFile == 0))
             return false;
         // Checking if already viewed.
-        if (alreadyVisitedLastPositions.contains(position))
-            return false;
-        return true;
+        return !(alreadyVisitedLastPositions.contains(position));
     }
 
     static class ViewHolder {

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class LoginActivity extends Activity {
     // For logging.
     private static final String TAG = LoginActivity.class.getSimpleName();
-    private Logs log = new Logs(TAG);
+    private final Logs log = new Logs(TAG);
 
     private SharedPref sharedPref;
 
@@ -49,7 +49,7 @@ public class LoginActivity extends Activity {
         });
     }
 
-    private void attemptLogin(){
+    private void attemptLogin() {
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -111,30 +111,30 @@ public class LoginActivity extends Activity {
 
         // Check if password is valid.
 
-        if (password.length() >= 8){
+        if (password.length() >= 8) {
             validate = true;
         } else {
             validate = false;
             mPasswordView.setError(getString(R.string.error_invalid_password_length));
         }
 
-        if (validate && hasUppercase.matcher(password).find()){
+        if (validate && hasUppercase.matcher(password).find()) {
             validate = true;
-        } else if (validate){
+        } else if (validate) {
             validate = false;
             mPasswordView.setError(getString(R.string.error_invalid_password_uppercase));
         }
 
-        if (validate && hasLowercase.matcher(password).find()){
+        if (validate && hasLowercase.matcher(password).find()) {
             validate = true;
-        } else if (validate){
+        } else if (validate) {
             validate = false;
             mPasswordView.setError(getString(R.string.error_invalid_password_lowercase));
         }
 
-        if (validate && hasNumber.matcher(password).find()){
+        if (validate && hasNumber.matcher(password).find()) {
             validate = true;
-        } else if (validate){
+        } else if (validate) {
             validate = false;
             mPasswordView.setError(getString(R.string.error_invalid_password_digit));
         }

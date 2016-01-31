@@ -9,22 +9,23 @@ import android.content.SharedPreferences;
  * whole app without writing same stuff again and again.
  */
 public class SharedPref {
-    static final String MyPREFERENCES = "MyPrefs";
-    static final String Logged = "loggedKey";
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    private static final String MyPREFERENCES = "MyPrefs";
+    private static final String Logged = "loggedKey";
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
-    public SharedPref(Context context){
+    public SharedPref(Context context) {
         sharedPreferences = context.getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+        editor.apply();
     }
 
-    public void changeIfLogged(Boolean ifLogged){
+    public void changeIfLogged(Boolean ifLogged) {
         editor.putBoolean(Logged, ifLogged);
         editor.apply();
     }
 
-    public Boolean getIfLogged(){
+    public Boolean getIfLogged() {
         return sharedPreferences.getBoolean(Logged, false);
     }
 }

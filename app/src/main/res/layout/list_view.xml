@@ -16,6 +16,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_margin="8dp"
+            android:contentDescription="@string/image_desc_element_list"
             android:src="@mipmap/ic_launcher" />
 
         <LinearLayout
@@ -27,7 +28,7 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Title"
+                android:text="@string/title_element_list"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/colorPrimary" />
 
@@ -35,7 +36,7 @@
                 android:id="@+id/desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Description" />
+                android:text="@string/desc_element_list" />
 
         </LinearLayout>
     </LinearLayout>

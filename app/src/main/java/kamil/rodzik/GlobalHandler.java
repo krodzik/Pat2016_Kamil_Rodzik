@@ -15,22 +15,17 @@ public class GlobalHandler {
     private final Handler handler;
 
     // Restrict the constructor from being instantiated
-    private GlobalHandler(){
+    private GlobalHandler() {
         handler = new Handler();
     }
 
-    /*
-    public void setData(Handler d){
-        this.handler=d;
-    }
-    */
-    public Handler getHandler(){
+    public Handler getHandler() {
         return this.handler;
     }
 
-    public static synchronized GlobalHandler getInstance(){
-        if(instance==null){
-            instance=new GlobalHandler();
+    public static synchronized GlobalHandler getInstance() {
+        if (instance == null) {
+            instance = new GlobalHandler();
         }
         return instance;
     }

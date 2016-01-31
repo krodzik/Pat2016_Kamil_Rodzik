@@ -14,9 +14,9 @@ import android.os.Handler;
 public class SplashActivity extends Activity {
     // For logging.
     private static final String TAG = SplashActivity.class.getSimpleName();
-    private Logs log = new Logs(TAG);
+    private final Logs log = new Logs(TAG);
 
-    static final int SPLASH_TIME_OUT = 5000;    // Splash screen timer.
+    private static final int SPLASH_TIME_OUT = 5000;    // Splash screen timer.
 
     private SharedPref sharedPref;
 
@@ -44,12 +44,12 @@ public class SplashActivity extends Activity {
         handler = globalHandler.getHandler();
 
         if (!ifConfigurationChanged) {
-            if (sharedPref.getIfLogged()){
+            if (sharedPref.getIfLogged()) {
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
                 log.i("Start MainActivity - already Logged.");
                 finish();
-            }else {
+            } else {
                 log.i("Thread start.");
                 handler.postDelayed(endSplashScreen, SPLASH_TIME_OUT);
             }
@@ -76,7 +76,7 @@ public class SplashActivity extends Activity {
         ifConfigurationChanged = isChangingConfigurations();
         log.bool("ifConfigurationChanged : ", ifConfigurationChanged);
 
-        if(!ifConfigurationChanged) {
+        if (!ifConfigurationChanged) {
             log.i("Delete thread. App goes in background.");
             handler = globalHandler.getHandler();
             handler.removeCallbacksAndMessages(null);
