@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ import kamil.rodzik.R;
  * Created by Kamil on 24.01.2016.
  * Adapter for JSON object list.
  */
-public class JSONListAdapter extends ArrayAdapter<ObjectJSON>  {
+public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
     // For logging.
     private static final String TAG = JSONListAdapter.class.getSimpleName();
     private static Logs log = new Logs(TAG);
@@ -130,45 +131,33 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON>  {
         protected Boolean doInBackground(Void... unused) {
 
             int fileNumberToParse = findFileNumberToParse();
-            StringBuilder stringFromURL = new StringBuilder();
-
             String combinedURL = combineIntoURL(fileNumberToParse);
-
-            if (!isURLReachable(combinedURL)){
-                log.i("Bad URL. Can't load more files from server.");
-                return true;
-            }
 
             try {
                 URL url = new URL(combinedURL);
+
+                if (isURLReachable(url)) {
+                    log.i("URL reachable. Start parsing.");
+                } else {    // There's no more JSON file to download.
+                    log.e("URL unreachable. There's no more JSON file to download.");
+                    return true;
+                }
+
+
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
                 BufferedReader bufferedReader = new BufferedReader(
                         new InputStreamReader(urlConnection.getInputStream()));
 
+                String stringDataFromURL = getStringDataFromURL(bufferedReader);
 
-                //stringFromURL = getStringFromURL(bufferedReader);
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringFromURL.append(line);
-                }
+                urlConnection.disconnect();
 
-                JSONObject jsonObject = new JSONObject(stringFromURL.toString());
+                JSONObject jsonObject = new JSONObject(stringDataFromURL);
                 JSONArray jsonArray = jsonObject.getJSONArray("array");
 
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    ObjectJSON objectJSON = new ObjectJSON();
+                getObjectsFromJSONArray(jsonArray);
 
-                    JSONObject jsonRealObject = jsonArray.getJSONObject(i);
-
-                    objectJSON.setTitle(jsonRealObject.getString("title"));
-                    objectJSON.setDesc(jsonRealObject.getString("desc"));
-                    objectJSON.setImage(jsonRealObject.getString("url"));
-
-                    JSONObjectsList.add(objectJSON);
-                    //log.i("Progress update : " + Integer.toString(i + 1));
-                    publishProgress(i + 1);
-                    Thread.sleep(250);
-                }
                 log.i("Success parsing JSON!");
                 return true;
             } catch (MalformedURLException e) {
@@ -176,9 +165,11 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON>  {
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+                log.e("URL unreachable. Exception throw.");
                 e.printStackTrace();
-                // dla sleepa
-            } catch (InterruptedException e) {
+                // Using ProgressStatus to notify MainActivity so proper message can be shown.
+                ProgressStatus.getProgressStatusInstance().changeProgress(-1);
+            } catch (InterruptedException e) {  // TODO For sleep
                 e.printStackTrace();
             }
 
@@ -186,50 +177,59 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON>  {
             return false;
         }
 
-        private int findFileNumberToParse(){
+        private int findFileNumberToParse() {
             int fileNumber = 0;
             int JSONObjectListLength = JSONObjectsList.size();
             log.I("Number of elements in JSONObjectsList =", JSONObjectListLength);
 
-            while((fileNumber*10) < JSONObjectListLength){
+            while ((fileNumber * 10) < JSONObjectListLength) {
                 fileNumber++;
             }
             return fileNumber;
         }
 
-        private String combineIntoURL(int fileNumber){
+        private String combineIntoURL(int fileNumber) {
             String combinedURL = BASE_SERVER_URL + "page_" + Integer.toString(fileNumber) + ".json";
             log.i("URL : " + combinedURL);
             return combinedURL;
         }
 
-        private boolean isURLReachable(String combinedURL) {
-            try {
-                URL url = new URL(combinedURL);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                /*
-                int code = connection.getResponseCode();
-                if(code == 200) {
-                    log.I("code =", code);
-                    log.i("URL reachable. Start parsing.");
-                    return true;
-                }
-                */
-                connection.setRequestMethod("HEAD");
-                //return (connection.getResponseCode() == HttpURLConnection.HTTP_OK);
-                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK){
-                    log.i("URL reachable. Start parsing.");
-                    return true;
-                }
+        private boolean isURLReachable(URL url) throws IOException {
+            HttpURLConnection.setFollowRedirects(false);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("HEAD");
+            int responseCode = connection.getResponseCode();
+            log.I("getResponseCode =", responseCode);
+            HttpURLConnection.setFollowRedirects(true);
+            connection.disconnect();
 
-            } catch (IOException e){
-                e.printStackTrace();
-                log.e("URL unreachable.");
-                return false;
+            return (responseCode == HttpURLConnection.HTTP_OK);
+        }
+
+        private String getStringDataFromURL(BufferedReader bufferedReader) throws IOException {
+            StringBuilder dataFromURL = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                dataFromURL.append(line);
             }
-            // can delete
-            log.e("URL unreachable.");
-            return false;
+
+            return dataFromURL.toString();
+        }
+
+        private void getObjectsFromJSONArray(JSONArray jsonArray) throws JSONException, InterruptedException {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                ObjectJSON objectJSON = new ObjectJSON();
+
+                JSONObject jsonRealObject = jsonArray.getJSONObject(i);
+
+                objectJSON.setTitle(jsonRealObject.getString("title"));
+                objectJSON.setDesc(jsonRealObject.getString("desc"));
+                objectJSON.setImage(jsonRealObject.getString("url"));
+
+                JSONObjectsList.add(objectJSON);
+                publishProgress(i + 1);
+                Thread.sleep(250);
+            }
         }
 
         @Override

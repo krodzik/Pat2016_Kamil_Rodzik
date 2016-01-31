@@ -36,5 +36,14 @@
         android:name="kamil.rodzik.JSON.JSONObjectListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
+    <!--
+    <ProgressBar
+        android:id="@+id/progressBarUnder"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:minHeight="30dp"
+        android:visibility="gone"/>
+-->
 </LinearLayout>
