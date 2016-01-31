@@ -44,6 +44,8 @@ public class MainActivity extends Activity implements ProgressStatus.OnProgressB
             progressBar.setVisibility(View.VISIBLE);
         }
         progressBarUnder = (ProgressBar) findViewById(R.id.progressBarUnder);
+        // To save progress bar status over orientation change below method is called.
+        progressChanged();
 
         // Logout button logic.
         Button mSignOutButton = (Button) findViewById(R.id.sign_out_button);
