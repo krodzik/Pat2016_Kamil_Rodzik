@@ -1,20 +1,17 @@
-package kamil.rodzik.Model;
+package kamil.rodzik.JSON;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.LruCache;
 import android.widget.ImageView;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import kamil.rodzik.Logs;
-import kamil.rodzik.R;
 
 /**
  * Created by Kamil on 26.01.2016.

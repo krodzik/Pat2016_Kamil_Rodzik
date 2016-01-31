@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class LoginActivity extends Activity {
     // For logging.
     private static final String TAG = LoginActivity.class.getSimpleName();
-    private Logs log;
+    private Logs log = new Logs(TAG);
 
     private SharedPref sharedPref;
 
@@ -34,11 +34,11 @@ public class LoginActivity extends Activity {
 
         // Sending context to SharedPreferences.
         sharedPref = new SharedPref(this);
-        log = new Logs(TAG);
 
         mEmailView = (EditText) findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.password);
 
+        // Login button logic.
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -50,7 +50,6 @@ public class LoginActivity extends Activity {
     }
 
     private void attemptLogin(){
-        log.i("attemptLogin()");
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -90,12 +89,11 @@ public class LoginActivity extends Activity {
             focusView.requestFocus();
         } else {
             log.i("attemptLogin() - SUCCESS");
-            // Saves logged state to SharedPreferences
+            // Saves logged state to SharedPreferences.
             sharedPref.changeIfLogged(true);
             // Everything seems fine. Start next activity and finish this one.
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
-            log.i("start MainActivity");
             finish();
         }
     }
@@ -112,24 +110,28 @@ public class LoginActivity extends Activity {
         final Pattern hasNumber = Pattern.compile("\\d");
 
         // Check if password is valid.
+
         if (password.length() >= 8){
             validate = true;
         } else {
             validate = false;
             mPasswordView.setError(getString(R.string.error_invalid_password_length));
         }
+
         if (validate && hasUppercase.matcher(password).find()){
             validate = true;
         } else if (validate){
             validate = false;
             mPasswordView.setError(getString(R.string.error_invalid_password_uppercase));
         }
+
         if (validate && hasLowercase.matcher(password).find()){
             validate = true;
         } else if (validate){
             validate = false;
             mPasswordView.setError(getString(R.string.error_invalid_password_lowercase));
         }
+
         if (validate && hasNumber.matcher(password).find()){
             validate = true;
         } else if (validate){

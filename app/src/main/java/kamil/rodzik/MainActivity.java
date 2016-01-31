@@ -20,7 +20,7 @@ public class MainActivity extends Activity implements ProgressStatus.OnProgressB
 
     private SharedPref sharedPref;
     private ProgressBar progressBar;
-    private int modelState = 0;
+    private int progressBarStatus = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,19 +29,16 @@ public class MainActivity extends Activity implements ProgressStatus.OnProgressB
         log.i("onCreate");
         // Sending context to SharedPreferences.
         sharedPref = new SharedPref(this);
-        //log = new Logs(TAG);
-
 
         ProgressStatus.getProgressStatusInstance().setListener(this);
-        modelState = ProgressStatus.getProgressStatusInstance().getProgress();
+        progressBarStatus = ProgressStatus.getProgressStatusInstance().getProgress();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        // Show progress bar first time we ran app.
+        // Show progress bar for the first activity call.
         if(savedInstanceState == null) {
             progressBar.setVisibility(View.VISIBLE);
         }
 
-
-        /* LOGOUT BUTTON LOGIC */
+        // Logout button logic.
         Button mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mSignOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,14 +48,6 @@ public class MainActivity extends Activity implements ProgressStatus.OnProgressB
         });
     }
 
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-        log.i("onStart");
-    }
-
-
     private void logout() {
         log.i("logout()");
         sharedPref.changeIfLogged(false);
@@ -67,27 +56,23 @@ public class MainActivity extends Activity implements ProgressStatus.OnProgressB
         finish();
     }
 
-
     @Override
     public void stateChanged() {
-        modelState = ProgressStatus.getProgressStatusInstance().getProgress();
-        //log.i(" says: Model state changed : " + Integer.toString(modelState));
-        // TODO to sie moze lub nie moze przydac do paginacji
-        if (modelState == 0){
+        // Get progress status from JSONListAdapter.
+        progressBarStatus = ProgressStatus.getProgressStatusInstance().getProgress();
+        if (progressBarStatus == 0){
             progressBar.setVisibility(View.VISIBLE);
         }
-        progressBar.setProgress(modelState);
-        if (modelState == 10) {
+        progressBar.setProgress(progressBarStatus);
+        if (progressBarStatus == 10) {
             progressBar.setVisibility(View.GONE);
         }
-
-        if(modelState == -1) {
+        // Show message to user when JSON file can't be downloaded.
+        if(progressBarStatus == -1) {
             progressBar.setVisibility(View.GONE);
             Toast.makeText(MainActivity.this,
                     "Unable to fetch data from server", Toast.LENGTH_LONG).show();
         }
 
     }
-
-
 }

@@ -1,17 +1,17 @@
-package kamil.rodzik.Model;
+package kamil.rodzik.JSON;
 
 /**
  * Created by Kamil on 24.01.2016.
- * Model for getting and setting JSON object.
+ * JSONStruct for getting and setting JSON object.
  */
 
-public class Model {
+public class ObjectJSON {
 
     private String title;
     private String desc;
     private String image;
 
-    public Model(){
+    public ObjectJSON(){
     }
 
     public String getTitle() {

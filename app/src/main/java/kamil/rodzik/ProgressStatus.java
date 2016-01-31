@@ -2,7 +2,7 @@ package kamil.rodzik;
 
 /**
  * Created by Kamil on 28.01.2016.
- *
+ * Class created for sending progress from JSONListAdapter to MainActivity progress bar.
  */
 public class ProgressStatus {
     public interface OnProgressBarStatusListener {

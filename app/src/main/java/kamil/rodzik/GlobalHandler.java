@@ -8,14 +8,14 @@ import android.os.Handler;
  * By now using by splash screen for storing handler over multiple redraws
  * in i.e. screen orientation change.
  */
-public class Globals {
-    private static Globals instance;
+public class GlobalHandler {
+    private static GlobalHandler instance;
 
     // Global variable
     private final Handler handler;
 
     // Restrict the constructor from being instantiated
-    private Globals(){
+    private GlobalHandler(){
         handler = new Handler();
     }
 
@@ -24,13 +24,13 @@ public class Globals {
         this.handler=d;
     }
     */
-    public Handler getData(){
+    public Handler getHandler(){
         return this.handler;
     }
 
-    public static synchronized Globals getInstance(){
+    public static synchronized GlobalHandler getInstance(){
         if(instance==null){
-            instance=new Globals();
+            instance=new GlobalHandler();
         }
         return instance;
     }

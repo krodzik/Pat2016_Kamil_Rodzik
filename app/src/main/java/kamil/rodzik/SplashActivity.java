@@ -14,7 +14,7 @@ import android.os.Handler;
 public class SplashActivity extends Activity {
     // For logging.
     private static final String TAG = SplashActivity.class.getSimpleName();
-    private Logs log;
+    private Logs log = new Logs(TAG);
 
     static final int SPLASH_TIME_OUT = 5000;    // Splash screen timer.
 
@@ -24,25 +24,24 @@ public class SplashActivity extends Activity {
     private boolean ifConfigurationChanged = false;
 
     private Handler handler = new Handler();
-    private final Globals g = Globals.getInstance();
+    private final GlobalHandler globalHandler = GlobalHandler.getInstance();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        log = new Logs(TAG);
         sharedPref = new SharedPref(this);
 
-        log.i("onCreate()");
+        log.i("onCreate");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        log.i("onResume()");
+        log.i("onResume");
         log.bool("ifConfigurationChanged : ", ifConfigurationChanged);
 
-        handler = g.getData();
+        handler = globalHandler.getHandler();
 
         if (!ifConfigurationChanged) {
             if (sharedPref.getIfLogged()){
@@ -72,14 +71,14 @@ public class SplashActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        log.i("onPause()");
+        log.i("onPause");
 
         ifConfigurationChanged = isChangingConfigurations();
         log.bool("ifConfigurationChanged : ", ifConfigurationChanged);
 
         if(!ifConfigurationChanged) {
             log.i("Delete thread. App goes in background.");
-            handler = g.getData();
+            handler = globalHandler.getHandler();
             handler.removeCallbacksAndMessages(null);
         }
     }
@@ -102,6 +101,6 @@ public class SplashActivity extends Activity {
             super.onBackPressed();
         }
         ifBackPressed = true;
-        log.i("back");
+        log.i("Back was pressed.");
     }
 }
