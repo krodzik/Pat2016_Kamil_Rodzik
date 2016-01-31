@@ -27,8 +27,8 @@ public class ImageLoader {
     private static int image;
     private static String imageName;
 
-    private final int IMAGE_HEIGHT = 100;
-    private final int IMAGE_WIDTH = 100;
+    private final int IMAGE_HEIGHT = 70;
+    private final int IMAGE_WIDTH = 70;
 
     private LruCache<String, Bitmap> mMemoryCache;
 

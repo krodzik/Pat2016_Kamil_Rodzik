@@ -121,9 +121,9 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // TODO kombinowanie z progress barem
+
             // Send "0" to initiate progress bar.
-            ProgressStatus.getProgressStatusInstance().changeProgress(0);
+            ProgressStatus.getProgressStatusInstance().changeProgress(100);
             //log.i("Sending 0");
         }
 
@@ -138,6 +138,9 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
 
                 if (isURLReachable(url)) {
                     log.i("URL reachable. Start parsing.");
+                    // Send "0" to initiate progress bar in MainActivity.
+                    //ProgressStatus.getProgressStatusInstance().changeProgress(0);
+                    //ProgressStatus.getProgressStatusInstance().changeProgress(100);
                 } else {    // There's no more JSON file to download.
                     log.e("URL unreachable. There's no more JSON file to download.");
                     return true;
@@ -245,6 +248,8 @@ public class JSONListAdapter extends ArrayAdapter<ObjectJSON> {
             //progressBar.setVisibility(View.GONE);
             log.i("onPostExecute");
             notifyDataSetChanged();
+
+            ProgressStatus.getProgressStatusInstance().changeProgress(101);
 
             // Error when trying fetch data from server. Using ProgressStatus to notify MainActivity
             if (!result) {

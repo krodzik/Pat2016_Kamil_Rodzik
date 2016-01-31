@@ -6,7 +6,7 @@ package kamil.rodzik;
  */
 public class ProgressStatus {
     public interface OnProgressBarStatusListener {
-        void stateChanged();
+        void progressChanged();
     }
 
     private static ProgressStatus mInstance;
@@ -38,7 +38,7 @@ public class ProgressStatus {
     }
 
     private void notifyProgressChange() {
-        mListener.stateChanged();
+        mListener.progressChanged();
     }
 }
 
