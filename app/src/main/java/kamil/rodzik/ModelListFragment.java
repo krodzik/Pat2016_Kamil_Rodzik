@@ -33,36 +33,19 @@ public class ModelListFragment extends ListFragment {
     private static final String TAG = ModelListFragment.class.getSimpleName();
     private Logs log = new Logs(TAG);
 
-    final static String BASE_SERVER_URL = "http://doom.comli.com/";
-
-    ArrayList<Model> modelList;
     ModelAdapter adapter;
-
-    private ProgressBar progressBar;
+    ArrayList<Model> modelList;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        log.e("onCreate");
-        //setRetainInstance(true);
+        log.i("onCreate");
 
         modelList = new ArrayList<>();
-        //new JSONParser().execute(BASE_SERVER_URL);
-
-        // context, resource, ...
         adapter = new ModelAdapter(getActivity().getBaseContext(), R.layout.list_view, modelList);
         setListAdapter(adapter);
     }
-
-    /*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        log.i("onCreateView");
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-    */
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -70,7 +53,6 @@ public class ModelListFragment extends ListFragment {
         log.i("onActivityCreated");
 
         setRetainInstance(true);
-
     }
 
 

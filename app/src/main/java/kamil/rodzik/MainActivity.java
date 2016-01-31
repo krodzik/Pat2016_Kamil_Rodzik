@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 /**
  * Created by Kamil Rodzik on 11.01.2015.
@@ -34,6 +35,7 @@ public class MainActivity extends Activity implements ProgressStatus.OnProgressB
         ProgressStatus.getProgressStatusInstance().setListener(this);
         modelState = ProgressStatus.getProgressStatusInstance().getProgress();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        // Show progress bar first time we ran app.
         if(savedInstanceState == null) {
             progressBar.setVisibility(View.VISIBLE);
         }
@@ -72,13 +74,19 @@ public class MainActivity extends Activity implements ProgressStatus.OnProgressB
         //log.i(" says: Model state changed : " + Integer.toString(modelState));
         // TODO to sie moze lub nie moze przydac do paginacji
         if (modelState == 0){
-            log.e("modelState equal ZERO");
             progressBar.setVisibility(View.VISIBLE);
         }
         progressBar.setProgress(modelState);
         if (modelState == 10) {
             progressBar.setVisibility(View.GONE);
         }
+
+        if(modelState == -1) {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(MainActivity.this,
+                    "Unable to fetch data from server", Toast.LENGTH_LONG).show();
+        }
+
     }
 
 

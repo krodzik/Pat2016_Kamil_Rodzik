@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,8 +51,8 @@ public class ModelAdapter extends ArrayAdapter<Model>  {
     public ModelAdapter(Context context, int resource, ArrayList<Model> objects) {
         super(context, resource, objects);
 
-        modelList = objects;
         Resource = resource;
+        modelList = objects;
 
         imageLoader = new ImageLoader(context);
 
@@ -64,7 +65,7 @@ public class ModelAdapter extends ArrayAdapter<Model>  {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        //log.e("Pozycja : " + Integer.toString(position));
+        log.i("Pozycja : " + Integer.toString(position));
         if (((position % 9) == 0) && !(alreadyWelcomePositions.contains(position))) {
             log.e("Zaladowanie nowej listy");
             new JSONParser().execute();
@@ -89,7 +90,7 @@ public class ModelAdapter extends ArrayAdapter<Model>  {
         holder.desc.setText(modelList.get(position).getDesc());
         holder.imageView.setImageResource(R.mipmap.ic_launcher);
 
-        //log.i("Image loading ... ");
+        log.i("Image loading ... ");
         imageLoader.loadBitmap(modelList.get(position).getImage(), holder.imageView);
 
         return v;
@@ -110,7 +111,7 @@ public class ModelAdapter extends ArrayAdapter<Model>  {
             // Send "0" to initiate progress bar.
 
             ProgressStatus.getProgressStatusInstance().changeProgress(0);
-            log.e("Sending 0");
+            log.i("Sending 0");
 
         }
 
@@ -191,14 +192,14 @@ public class ModelAdapter extends ArrayAdapter<Model>  {
             super.onPostExecute(result);
 
             //progressBar.setVisibility(View.GONE);
+            log.i("Notify change.");
             notifyDataSetChanged();
 
-            /*
+            // Error when trying fetch data from server. Using ProgressStatus to notify MainActivity
             if (!result) {
-                Toast.makeText(getActivity().getBaseContext(),
-                        "Unable to fetch data from server", Toast.LENGTH_LONG).show();
+                ProgressStatus.getProgressStatusInstance().changeProgress(-1);
             }
-            */
+
         }
     }
 
